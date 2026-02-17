@@ -14,12 +14,13 @@ Karate is a framework used for test automation. It combines API testing, mocking
 
 ## Onboarding experience
 
-Did it build and run as documented?
-    
-See the assignment for details; if everything works out of the box,
-there is no need to write much here. If the first project(s) you picked
-ended up being unsuitable, you can describe the "onboarding experience"
-for each project, along with reason(s) why you changed to a different one.
+1. How easily can you build the project? Briefly describe if everything worked as documented or not:
+(a) Did you have to install a lot of additional tools to build the software?
+(b) Were those tools well documented?
+(c) Were other components installed automatically by the build script?
+(d) Did the build conclude automatically without errors?
+(e) How well do examples and tests run on your system(s)?
+2. Do you plan to continue or choose another project?
 
 
 ## Complexity
