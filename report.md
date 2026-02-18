@@ -42,6 +42,22 @@ Carried out refactoring (optional, P+):
 
 git diff ...
 
+### RequestHandler#handle
+
+- **Extract path adjustment**: Move the logic that adjusts `request.getPath()` into a `adjustPath(Request)` method.
+
+- **Extract resource type initialization**: Move `request.setResourceType(...)` logic to `ensureResourceType(Request)`.
+
+- **Extract static resource handling**: Create `tryHandleStatic(Request, ServerContext)` that returns a `Response` if the request matches static resource conditions.
+
+- **Extract session resolution**: Move all session-loading, expiration-checking, and auto-creation logic into `resolveSessionIfRequired(Request, ServerContext)` and helper methods:
+   - `resolveSession()`
+      - `loadValidSession()`
+      - `isAuthFlow()`
+   - `redirectToSignIn`
+
+This will significantly lower the complexity and make it more obvious what the intent of the `handle` method is. It can however obfuscate what actually is going on.
+
 ## Coverage
 
 ### Tools
