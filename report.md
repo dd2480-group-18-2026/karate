@@ -16,11 +16,17 @@ Karate is a framework used for test automation. It combines API testing, mocking
 
 1. How easily can you build the project? Briefly describe if everything worked as documented or not:
 (a) Did you have to install a lot of additional tools to build the software?
+The only additional tools I needed to build the software was an IDE, JDK, Maven and Git. 
 (b) Were those tools well documented?
+Yes, The documentation clearly stated how the additional tools were to be installed, these are well documented tools and have clear and thorough documentation. Though they did not give a link to the official documentation for the tools.
 (c) Were other components installed automatically by the build script?
+Yes, the components were installed automatically by Maven during the build process
 (d) Did the build conclude automatically without errors?
+Building was succefull but there were scenario/assertion failures during Gatling simulations but these were intentional in the demo feature files.
 (e) How well do examples and tests run on your system(s)?
+JUnit tests passed 6/6 but Gatling example simulations produced KO requests, but these were intentional after looking through the tests and coumentation. Gatlin also generated HTML performance reports
 2. Do you plan to continue or choose another project?
+we plan on continuing with this project
 
 
 ## Complexity
