@@ -171,7 +171,33 @@
                 </excludes>
             </testResource>
         </testResources>
-        <plugins>           
+        <plugins>     
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <executions>
+
+                    <!-- attaches agent before tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- generates report after tests -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>   
+
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
@@ -183,8 +209,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>                   
-        </plugins>               
+            </plugin>                      
+        </plugins>    
     </build>
     
     <profiles>
@@ -394,6 +420,7 @@
                                 <exclude>**/ProxyServerTest.java</exclude>
                                 <exclude>**/ProxyServerSslTest.java</exclude>
                             </excludes>
+                            <argLine>${argLine} -Dfile.encoding=UTF-8</argLine>
                         </configuration>
                     </plugin>
                 </plugins>                
