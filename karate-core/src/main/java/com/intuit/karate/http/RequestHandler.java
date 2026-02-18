@@ -23,7 +23,7 @@
  */
 package com.intuit.karate.http;
 
-import com.intuit.karate.BranchCoverageInfo;
+import static com.intuit.karate.BranchCoverageInfo.branchFlags;
 
 import com.intuit.karate.template.KarateTemplateEngine;
 import com.intuit.karate.template.TemplateUtils;
@@ -41,7 +41,6 @@ public class RequestHandler implements ServerHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private static final String SLASH = "/";
-
     private final SessionStore sessionStore;
     private final KarateTemplateEngine templateEngine;
     private final ServerConfig config;
