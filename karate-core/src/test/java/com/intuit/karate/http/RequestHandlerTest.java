@@ -22,10 +22,9 @@ class RequestHandlerTest {
     List<String> cookies;
     String body;
 
-    @BeforeEach
-    void beforeEach() {
+    void createInitialRequest(boolean autoCreateSession) {
         ServerConfig config = new ServerConfig("classpath:demo");
-        config.autoCreateSession(true);
+        config.autoCreateSession(autoCreateSession);
         handler = new RequestHandler(config);
         request = new HttpRequestBuilder(null).url("/").method("GET");
     }
@@ -53,6 +52,7 @@ class RequestHandlerTest {
 
     @Test
     void testIndexAndAjaxPost() {
+        createInitialRequest(true);
         request.path("index");
         handle();
         matchHeaderContains("Set-Cookie", "karate.sid");
@@ -69,6 +69,26 @@ class RequestHandlerTest {
                 .method("POST");
         handle();
         assertTrue(body.contains("<span>John</span>"));
+    }
+
+    @Test
+    void handle_returnsStatus302_whenSessionNotAutoCreate() {
+        createInitialRequest(false);
+        request.path("index");
+        handle();
+        System.out.println(response.getBodyAsString());
+        assertTrue(response.getStatus() == 302);
+    }
+
+    @Test
+    void handle_returnsStatus200_whenRequestOfStaticResource() {
+        createInitialRequest(true);
+        request.path("index")
+                .contentType("text/html")
+                .method("GET");
+        handle();
+        System.out.println(response.getBodyAsString());
+        assertTrue(response.getStatus() == 200);
     }
 
 }
