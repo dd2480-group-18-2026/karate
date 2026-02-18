@@ -23,6 +23,8 @@
  */
 package com.intuit.karate.http;
 
+import static com.intuit.karate.BranchCoverageInfo.branchFlags;
+import static com.intuit.karate.BranchCoverageInfo.methodBranches;
 import com.intuit.karate.Json;
 import com.intuit.karate.JsonUtils;
 import com.intuit.karate.RuntimeHook;
@@ -163,72 +165,119 @@ public class HttpRequestBuilder implements ProxyObject {
 
     private void buildInternal() {
         if (url == null) {
+			branchFlags[1][0] = true;
             url = client.getConfig().getUrl();
             if (url == null) {
+				branchFlags[1][2] = true;
                 throw new RuntimeException("incomplete http request, 'url' not set");
             }
-        }
+			else { branchFlags[1][3] = true; }
+        } 
+		else { branchFlags[1][1] = true; }
         if (method == null) {
+			branchFlags[1][4] = true;
             if (multiPart != null && multiPart.isMultipart()) {
+				branchFlags[1][6] = true;
                 method = "POST";
             } else {
+				branchFlags[1][7] = true;
                 method = "GET";
             }
         }
+		else { branchFlags[1][5] = true; }
         method = method.toUpperCase();
         if ("GET".equals(method) && multiPart != null) {
+			branchFlags[1][8] = true;
             Map<String, Object> parts = multiPart.getFormFields();
             if (parts != null) {
+				branchFlags[1][10] = true;
                 parts.forEach((k, v) -> param(k, (String) v));
             }
+			else {branchFlags[1][11] = true;}
             multiPart = null;
         }
+		else { branchFlags[1][9] = true; }
         if (multiPart != null) {
+			branchFlags[1][12] = true;
             if (body == null) { // this is not-null only for a re-try, don't rebuild multi-part
+				branchFlags[1][14] = true;
                 body = multiPart.build();
                 String userContentType = getHeader(HttpConstants.HDR_CONTENT_TYPE);
                 if (userContentType != null) {
+					branchFlags[1][16] = true;
                     String boundary = multiPart.getBoundary();
                     if (boundary != null) {
+						branchFlags[1][18] = true;
                         contentType(userContentType + "; boundary=" + boundary);
                     }
+					else {branchFlags[1][19] = true;}
                 } else {
+					branchFlags[1][17] = true;
                     contentType(multiPart.getContentTypeHeader());
                 }
             }
+			else { branchFlags[1][15] = true; }
         }
+		else { branchFlags[1][13] = true; }
         if (cookies != null && !cookies.isEmpty()) {
+			branchFlags[1][20] = true;
             List<String> cookieValues = new ArrayList<>(cookies.size());
             for (Cookie c : cookies) {
+				branchFlags[1][22] = true;
                 String cookieValue = ClientCookieEncoder.LAX.encode(c);
                 cookieValues.add(cookieValue);
             }
+			// exit loop
+			branchFlags[1][23] = true;
             header(HttpConstants.HDR_COOKIE, StringUtils.join(cookieValues, "; "));
         }
+		else { branchFlags[1][21] = true; }
         if (body != null) {
+			branchFlags[1][24] = true;
             if (multiPart == null) {
+				branchFlags[1][26] = true;
                 String contentType = getContentType();
                 if (contentType == null) {
+					branchFlags[1][28] = true;
                     ResourceType rt = ResourceType.fromObject(body);
                     if (rt != null) {
+						branchFlags[1][30] = true;
                         contentType = rt.contentType;
                     }
+					else { branchFlags[1][31] = true; }
                 }
+				else { branchFlags[1][29] = true; }
+				// Ternary
+				if (contentType == null) {
+					branchFlags[1][32] = true;
+				} else { branchFlags[1][33] = true; }
                 Charset charset = contentType == null ? null : HttpUtils.parseContentTypeCharset(contentType);
                 if (charset == null) {
+					branchFlags[1][34] = true;
+					// Ternary
+					if (client == null) {
+						branchFlags[1][36] = true;
+					} else { branchFlags[1][37] = true; }
                     // client can be null when not in karate scenario, and mock clients can have nulls
                     charset = client == null ? null : client.getConfig() == null ? null : client.getConfig().getCharset();
                     if (charset != null) {
+						branchFlags[1][38] = true;
                         // edge case, support setting content type to an empty string
                         contentType = StringUtils.trimToNull(contentType);
                         if (contentType != null) {
+							branchFlags[1][40] = true;
                             contentType = contentType + "; charset=" + charset;
                         }
+						else { branchFlags[1][41] = true; }
                     }
+					else { branchFlags[1][39] = true; }
                 }
+				else { branchFlags[1][35] = true; }
                 contentType(contentType);
             }
+			else { branchFlags[1][27] = true; }
         }
+		else { branchFlags[1][25] = true; }
     }
 
     public Response invoke() {

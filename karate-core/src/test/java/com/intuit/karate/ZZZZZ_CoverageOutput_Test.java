@@ -24,7 +24,7 @@ class ZZZZZ_CoverageOutput_Test {
 			int covered = 0;
 			System.out.println("Method: " + i);
 			for (int j = 0; j < methodBranches[i]; j++) {
-				if (branchFlags[0][j] == true) {
+				if (branchFlags[i][j] == true) {
 					covered++;
 					System.out.println("Branch " + j + " reached");
 				}
@@ -32,7 +32,7 @@ class ZZZZZ_CoverageOutput_Test {
 					System.out.println("Branch " + j + " not accessed");
 				}
 			}
-			System.out.println("Coverage for method " + i + " = " + 100.0*((double)covered / (double)methodBranches[0]) + " %");
+			System.out.println("Coverage for method " + i + " = " + 100.0*((double)covered / (double)methodBranches[i]) + " %");
 			totalCovered += covered;
 		}
 		int totalBranches = methodBranches[0] + methodBranches[1] + methodBranches[2] + methodBranches[3];
