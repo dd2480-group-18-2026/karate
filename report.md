@@ -65,6 +65,31 @@ git diff ...
 
 This will significantly lower the complexity and make it more obvious what the intent of the `handle` method is. It can however obfuscate what actually is going on.
 
+### ScenarioEngine#match
+
+- **Extract LHS parsing**: Move all `name`/`path` adjustment logic into something like `parseLhs(...)`.
+
+- **Break up and extract complex boolean conditions**:
+   - `shouldEvaluateAsPath(...)`
+   - `isSimpleReference(...)`
+   - `isStructurePath(...)`
+   - `shouldFallbackToFullExpression(...)`
+
+- **Extract LHS evaluation**  
+  Extract the logic that decides how to evaluate the LHS (JS vs JsonPath/XPath) into a dedicated method like `resolveActual(...)`.
+
+- **Extract path application**: Move JSON/XPath branching into something like `applyPathIfNeeded(...)`.
+
+  The structure of `match(...)` will be:
+  1. Resolve LHS  
+  2. Early return in header case  
+  3. Resolve actual value  
+  4. Apply path  
+  5. Evaluate expected  
+  6. Perform match
+
+  Complexity will be lowered by the refactoring and by having the boolean statements in their own methods makes intent a lot clearer.
+
 ## Coverage
 
 ### Tools
