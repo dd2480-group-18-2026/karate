@@ -112,28 +112,37 @@ public interface MatchOperator {
             Match.Value actual = operation.actual;
             Match.Value expected = operation.expected;
             Match.Context context = operation.context;
+            // pi = 1
             if (actual.isNotPresent()) {
+                // pi = 3
                 if (!expected.isString() || !expected.getAsString().startsWith("#")) {
                     return operation.fail("actual path does not exist");
                 }
             }
             boolean isContainsFamily = isContainsFamily();
+            // pi = 4
             if (actual.type != expected.type) {
+                // pi = 8
                 if (isContainsFamily &&
                         // don't tamper with strings on the RHS that represent arrays or objects
                         (!expected.isList() && !(expected.isString() && expected.isArrayObjectOrReference()))) {
                     MatchOperation mo = new MatchOperation(context, this, actual, new Match.Value(Collections.singletonList(expected.getValue())));
                     mo.execute();
+                    // pi = 9
                     return mo.pass ? operation.pass() : operation.fail(mo.failReason);
                 }
+                // pi = 11
                 if (expected.isXml() && actual.isMap()) {
                     // special case, auto-convert rhs
                     MatchOperation mo = new MatchOperation(context, this, actual, new Match.Value(XmlUtils.toObject(expected.getValue(), true)));
                     mo.execute();
+                    // pi = 12
                     return mo.pass ? operation.pass() : operation.fail(mo.failReason);
                 }
+                // pi = 13
                 if (expected.isString()) {
                     String expStr = expected.getValue();
+                    // pi = 14
                     if (!expStr.startsWith("#")) { // edge case if rhs is macro
                         return operation.fail("data types don't match");
                     }
@@ -141,15 +150,22 @@ public interface MatchOperator {
                     return operation.fail("data types don't match");
                 }
             }
+            // pi = 15
             if (expected.isString()) {
                 String expStr = expected.getValue();
+                // pi = 16
                 if (expStr.startsWith("#")) {
+                    // pi = 17
                     return macroEqualsExpected(operation, expStr) ? operation.pass() : operation.fail(null);
                 }
             }
+            // pi =  18
             if (isEquals()) {
+                // pi = 19
                 return actualEqualsExpected(operation) ? operation.pass() : operation.fail("not equal");
+            // pi = 20
             } else if (isContainsFamily) {
+                // pi = 21
                 return actualContainsExpected(operation) ? operation.pass() : operation.fail("actual does not contain expected");
             }
             throw new RuntimeException("unexpected match operator: " + this);
