@@ -57,22 +57,35 @@ public class RequestHandler implements ServerHandler {
     @Override
     public Response handle(Request request) {
         if (stripHostContextPath != null) {
+            // It should handle potential foreseen prefix in the path
+            // by removing it from the request path.
             if (request.getPath().startsWith(stripHostContextPath)) {
                 request.setPath(request.getPath().substring(stripHostContextPath.length()));
             }
         }
         if (SLASH.equals(request.getPath())) {
+            // Set path to the home page path if the path is "/"
             request.setPath(config.getHomePagePath());
         }
+        //Until this point is about ensuring the path is properly set for further handling
+
         ServerContext context = contextFactory.apply(request);
         if (request.getResourceType() == null) { // can be set by context factory
+            // It should be able to handle requests for static resources even
+            // when no content type is specified in the request by inferring it
+            // from the type of the requested resource.
             request.setResourceType(ResourceType.fromFileExtension(request.getPath()));
         }
         if (!context.isApi() && request.isHttpGetForStaticResource() && context.isHttpGetAllowed()) {
             if (request.getResourcePath() == null) { // can be set by context factory
+                // It should be able to handle lack of resource path when static resource is
+                // requested by instead using the request path
                 request.setResourcePath(request.getPath()); // static resource
             }
             try {
+                // If the the context is not an API context and the request is for a static resource
+                // that static resource will be returned as long as GET requests are allowed by the
+                // context.
                 return response().buildStatic(request);
             } finally {
                 if (logger.isDebugEnabled()) {
@@ -82,8 +95,10 @@ public class RequestHandler implements ServerHandler {
         }
         Session session = context.getSession(); // can be pre-resolved by context-factory
         if (session == null && !context.isStateless()) {
+            // It should get/create a session if there is none and the context is not stateless
             String sessionId = context.getSessionCookieValue();
             if (sessionId != null) {
+                // It should get the existing session if it can find it using the sessionId
                 session = sessionStore.get(sessionId);
                 if (session != null && isExpired(session)) {
                     logger.debug("session expired: {}", session);
@@ -93,14 +108,19 @@ public class RequestHandler implements ServerHandler {
             }
             if (session == null) {
                 if (config.isUseGlobalSession()) {
+                    // If it cannot find an existing session but can use the global session it should do so
                     session = ServerConfig.GLOBAL_SESSION;
                 } else {
+                    // If it cannot find an existing session or use the global one it must create a session
                     if (config.isAutoCreateSession()) {
+                        // If it is allowed it should create a session automatically.
                         context.init();
                         session = context.getSession();
                         logger.debug("auto-created session: {} - {}", request, session);
                     } else if (config.getSigninPagePath().equals(request.getPath())
                             || config.getSignoutPagePath().equals(request.getPath())) {
+                        // If the request is to sign in or out the session is temporary and therefore
+                        // set to that.
                         session = Session.TEMPORARY;
                         logger.debug("auth flow: {}", request);
                     } else {
@@ -110,10 +130,15 @@ public class RequestHandler implements ServerHandler {
                             rb.deleteSessionCookie(sessionId);
                         }
                         if (request.isAjax()) {
+                            // Set HX-Redirect header with the signin url.
                             rb.ajaxRedirect(signInPath());
                         } else {
+                            // Otherwise set the location header with that url.
                             rb.locationHeader(signInPath());
                         }
+                        // If the session cannot be created automatically the requester and the path
+                        // of the request is not to sign in or out, the requester is redirected to
+                        // the signin path
                         return rb.buildWithStatus(302);
                     }
                 }
