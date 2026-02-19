@@ -4,7 +4,7 @@ This is a template for your report. You are free to modify it as needed.
 It is not required to use markdown for your report either, but the report
 has to be delivered in a standard, cross-platform format.
 
-## Project
+## 1) Project
 
 Name: karatelabs/karate
 
@@ -12,34 +12,110 @@ URL: https://github.com/karatelabs/karate
 
 Karate is a framework used for test automation. It combines API testing, mocking, performance testing and UI testing in one tool.
 
-## Onboarding experience
+## 2) Onboarding experience
 
 1. How easily can you build the project? Briefly describe if everything worked as documented or not:
-(a) Did you have to install a lot of additional tools to build the software?
-The only additional tools I needed to build the software was an IDE, JDK, Maven and Git. 
-(b) Were those tools well documented?
-Yes, The documentation clearly stated how the additional tools were to be installed, these are well documented tools and have clear and thorough documentation. Though they did not give a link to the official documentation for the tools.
-(c) Were other components installed automatically by the build script?
-Yes, the components were installed automatically by Maven during the build process
-(d) Did the build conclude automatically without errors?
-Building was succefull but there were scenario/assertion failures during Gatling simulations but these were intentional in the demo feature files.
-(e) How well do examples and tests run on your system(s)?
-JUnit tests passed 6/6 but Gatling example simulations produced KO requests, but these were intentional after looking through the tests and coumentation. Gatlin also generated HTML performance reports
+
+   a. Did you have to install a lot of additional tools to build the software?
+      
+      The only additional tools I needed to build the software was an IDE, JDK, Maven and Git. 
+
+   b. Were those tools well documented?
+      
+      Yes, The documentation clearly stated how the additional tools were to be installed, these are well documented tools and have clear and thorough documentation. Though they did not give a link to the official documentation for the tools.
+
+   c. Were other components installed automatically by the build script?
+
+      Yes, the components were installed automatically by Maven during the build process
+
+   d. Did the build conclude automatically without errors?
+
+      Building was succefull but there were scenario/assertion failures during Gatling simulations but these were intentional in the demo feature files.
+
+   e. How well do examples and tests run on your system(s)?
+
+      JUnit tests passed 6/6 but Gatling example simulations produced KO requests, but these were intentional after looking through the tests and coumentation. Gatlin also generated HTML performance reports
+
 2. Do you plan to continue or choose another project?
-we plan on continuing with this project
 
+   We plan on continuing with this project
 
-## Complexity
+## 3) Complexity
 
-1. What are your results for five complex functions?
-   * Did all methods (tools vs. manual count) get the same result?
-   * Are the results clear?
-2. Are the functions just complex, or also long?
-3. What is the purpose of the functions?
-4. Are exceptions taken into account in the given measurements?
-5. Is the documentation clear w.r.t. all the possible outcomes?
+As we only have four members in the group, we only examined four functions in the code. We focused on functions in the karate-core project, mostly because it is the part that hosts the core logic of the app. We felt it was more important to have this part correctly implemented and covered.
 
-## Refactoring
+We used [lizard](https://github.com/terryyin/lizard) as the tool to count both complexity and the number of lines of code (LOC).
+
+### 1. RequestHandler -> handle
+
+This function is located [here](karate-core/src/main/java/com/intuit/karate/http/RequestHandler.java#L58).
+
+The `handle` method of `RequestHandler` is supposed to:
+- normalize the request path
+- ensure resource type is set on the request
+- return early with static resource if that is requested
+- handle multiple session scenarios (higher up tried first):
+   1. session exists
+      1. already loaded
+      2. not loaded and then retreive from cache if possible
+   2. no session exists
+      1. use global session if allowed
+      2. create session automatically if allowed
+      3. create temporary session if authentication request
+      4. redirect to authentication if none of the above are possible
+- Actually handle the request (done outside of this method)
+
+For the complexity, lizard gave us 22 with 68 LOC. By our own count, we found a complexity of 18. 
+
+### 2. ScenarioEngine -> match
+
+This function is located [here](karate-core/src/main/java/com/intuit/karate/core/ScenarioEngine.java#L1769).
+
+For the complexity, lizard gave us 21 with 46 LOC. By our own count, we found a complexity of 20. 
+
+### 3. HttpRequestBuilder -> buildInternal
+
+This function is located [here](karate-core/src/main/java/com/intuit/karate/http/HttpRequestBuilder.java#L164).
+
+The `buildInternal` method of `HttpRequestBuilder` is supposed to build a ready to send request. To do that, it must:
+- Handle fallback when URL or method parameter is not set
+- Handle multipart request construction and special GET + multipart cases
+- Convert multipart form fields into query parameters when needed
+- Build and attach multipart bodies and boundaries
+- Handle cookies and attach them as headers
+- Generate content-type headers dependant on the type of request, including the charset
+
+For the complexity, lizard gave us 26 with 67 LOC. By our own count, we found a complexity of 25. We got almost the same result, which can be explained by the way lizard counts complexity.
+
+This function is not very complex, but it needs to deal with a lot of edge cases, hence the complexity.
+
+For the complexity measurements, we included the exception in the count, which could be the reason why our count is slightly off from lizard's.
+
+This function is neither commented nor documented.
+
+### 4. MatchOperator -> execute
+
+This function is located [here](karate-core/src/main/java/com/intuit/karate/MatchOperator.java#L111).
+
+The `execute()` method performs a match operation between actual and expected values by:
+- Handling missing actual values with macro-aware tolerance
+- Resolving type mismatches with special handling for:
+   - Contains-family coercion
+   - XML-to-Map conversion
+   - Macro-based type flexibility
+- Evaluating macro expressions before structural comparison
+- Dispatching to equality or contains-family comparison logic
+- Returning structured pass/fail results with appropriate error messages
+
+For the complexity, lizard gave us 22 with 44 LOC. By our own count, we found a complexity of 13. This discrepancy is probably due to lizard not counting the return points correctly. 
+
+The function itself is pretty complex, even though most of the complexity of the operation is already extracted in other functions. Its complexity comes primarily from its role as the control center of the macro execution, where it needs to make sure that the data is valid and parse it a little bit to start execution.
+
+For the complexity measurements, we included the exception in the count. However, this function also has a lot of failure states that are returned with normal `return`s.
+
+This function is neither commented nor documented.
+
+## 4) Refactoring
 
 Plan for refactoring complex code:
 
@@ -49,7 +125,7 @@ Carried out refactoring (optional, P+):
 
 git diff ...
 
-### RequestHandler#handle
+### 1. RequestHandler -> handle
 
 - **Extract path adjustment**: Move the logic that adjusts `request.getPath()` into a `adjustPath(Request)` method.
 
@@ -65,7 +141,7 @@ git diff ...
 
 This will significantly lower the complexity and make it more obvious what the intent of the `handle` method is. It can however obfuscate what actually is going on.
 
-### ScenarioEngine#match
+### 2. ScenarioEngine -> match
 
 - **Extract LHS parsing**: Move all `name`/`path` adjustment logic into something like `parseLhs(...)`.
 
@@ -91,16 +167,9 @@ This will significantly lower the complexity and make it more obvious what the i
   Complexity will be lowered by the refactoring and by having the boolean statements in their own methods makes intent a lot clearer.
 
 
-### HttpRequestBuilder#buildInternal
+### 3. HttpRequestBuilder -> buildInternal
 
-The `buildInternal` method of `HttpRequestBuilder` is supposed to:
-- Handle fallback when URL or method parameter is not set
-- Handle multipart request construction and special GET + multipart cases
-- Convert multipart form fields into query parameters when needed
-- Build and attach multipart bodies and boundaries
-- Handle cookies and attach them as headers
-- Generate content-type headers dependant on the type of request, including the charset
-
+The responsabilities of the function outline a possible path for refactoring:
 - **Extract all the fallbacks into helper methods**: All the code blocks that are below if statements checking whether or not a variable is null could be made to be separate methods to reduce unneeded complexity.
 
 - **Extract cookie handling** : Cookie handling could be its own method, as it is functionnality that could be needed in other parts of the code later on. It could be called `addCookieToHeader` for example.
@@ -114,10 +183,12 @@ The new structure of `buildInternal` would be :
 2. methodFallback()
 3. parts building stays as is
 4. addCookiesToHeader()
-5. if (multiPart != null && body == null) buildMultiPartContentType()
+5. ```Java
+   if (multiPart != null && body == null) buildMultiPartContentType()
    else if (multiPart == null && body != null) buildSinglepartContentType()
+   ```
 
-## Coverage
+## 5) Coverage
 
 ### Tools
 
@@ -147,7 +218,7 @@ its output?
 
 3. Are the results of your tool consistent with existing coverage tools?
 
-## Coverage improvement
+## 6) Coverage improvement
 
 Show the comments that describe the requirements for the coverage.
 
@@ -161,47 +232,27 @@ git diff ...
 
 Number of test cases added: two per team member (P) or at least four (P+).
 
-### RequestHandler#handle
-
-#### Requirements
-The `handle` method of `RequestHandler` is supposed to:
-- normalize the request path
-- ensure resource type is set on the request
-- return early with static resource if that is requested
-- handle multiple session scenarios (higher up tried first):
-   1. session exists
-      1. already loaded
-      2. not loaded and then retreive from cache if possible
-   2. no session exists
-      1. use global session if allowed
-      2. create session automatically if allowed
-      3. create temporary session if authentication request
-      4. redirect to authentication if none of the above are possible
-- Actually handle the request (done outside of this method)
-
-#### Coverage Improvement
+### 1. RequestHandler -> handle
 
 ![Coverage of RequestHandler handle before new tests](/report_resources/RequestHandler_handle_before.png)
 
 ![Coverage of RequestHandler handle after new tests](/report_resources/RequestHandler_handle_after.png)
 
-As can be seen in the two screenshots of the coverage reports for `RequestHandler`, the branch coverage for the `handle` method
-increased from 42 % to 64 percent after two new tests were added.
+As can be seen in the two screenshots of the coverage reports for `RequestHandler`, the branch coverage for the `handle` method increased from 42 % to 64 percent after two new tests were added.
 
-### HttpRequestBuilder#buildInternal
+### 3.. HttpRequestBuilder -> buildInternal
 
 ![Coverage of HttpRequestBuilder buildInternal before new tests](/report_resources/HttpRequestBuilder_buildInternal_before.png)
 
 ![Coverage of HttpRequestBuilder buildInternal after new tests](/report_resources/HttpRequestBuilder_buildInternal_after.png)
 
-As can be seen in the two screenshots of the coverage reports for `HttpRequestBuilder`, the branch coverage for the `buildInternal` method
-increased from 70 % to 88 % after four new tests were added. The instruction coverage also jumped from 78 % to 98 %.
+As can be seen in the two screenshots of the coverage reports for `HttpRequestBuilder`, the branch coverage for the `buildInternal` method increased from 70 % to 88 % after four new tests were added. The instruction coverage also jumped from 78 % to 98 %.
 
-## Self-assessment: Way of working
+## 7) Self-assessment: Way of working
 
 For this lab we consider ourselves to be in the  In Place. We started with a meeting where we discussed how to approach the assignment and which tools to use. We also looked at the grading criteria together to make sure we had the same expectations. We did notice however that some responsibilities were unclear after that meeting. That was however quickly remedied over Discord. We are following our established way of working to a high degree, but it is still something we have to actively think about and constantly check that we follow. We have therefore not reached the Working well stage yet. To reach the next stage, we simply need to get more practice with the established methods to make them come more naturally.
 
-## Overall experience
+## 8) Overall experience
 
 What are your main take-aways from this project? What did you learn?
 
