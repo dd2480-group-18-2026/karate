@@ -90,6 +90,33 @@ This will significantly lower the complexity and make it more obvious what the i
 
   Complexity will be lowered by the refactoring and by having the boolean statements in their own methods makes intent a lot clearer.
 
+
+### HttpRequestBuilder#buildInternal
+
+The `buildInternal` method of `HttpRequestBuilder` is supposed to:
+- Handle fallback when URL or method parameter is not set
+- Handle multipart request construction and special GET + multipart cases
+- Convert multipart form fields into query parameters when needed
+- Build and attach multipart bodies and boundaries
+- Handle cookies and attach them as headers
+- Generate content-type headers dependant on the type of request, including the charset
+
+- **Extract all the fallbacks into helper methods**: All the code blocks that are below if statements checking whether or not a variable is null could be made to be separate methods to reduce unneeded complexity.
+
+- **Extract cookie handling** : Cookie handling could be its own method, as it is functionnality that could be needed in other parts of the code later on. It could be called `addCookieToHeader` for example.
+
+- **Extract both content-types blocks into their own methods**: The function currently has two blocks that can build content-type in different ways. These are moderately complex, so extracting them makes sense and would reduce complexity while improving readability.
+
+- **Reorganize the function to have a single if else-if else statement for multipart and body**: Currently, the function checks whether multiPart and body are null twice. The checks are incompatible with each other, so they could be put in an if else-if branch to make it faster and more readable.
+
+The new structure of `buildInternal` would be :
+- urlFallback()
+- methodFallback()
+- parts building stays as is
+- addCookiesToHeader()
+- if (multiPart != null && body == null) buildMultiPartContentType()
+  else if (multiPart == null && body != null) buildSinglepartContentType()
+
 ## Coverage
 
 ### Tools
