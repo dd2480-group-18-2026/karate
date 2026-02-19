@@ -110,12 +110,12 @@ The `buildInternal` method of `HttpRequestBuilder` is supposed to:
 - **Reorganize the function to have a single if else-if else statement for multipart and body**: Currently, the function checks whether multiPart and body are null twice. The checks are incompatible with each other, so they could be put in an if else-if branch to make it faster and more readable.
 
 The new structure of `buildInternal` would be :
-- urlFallback()
-- methodFallback()
-- parts building stays as is
-- addCookiesToHeader()
-- if (multiPart != null && body == null) buildMultiPartContentType()
-  else if (multiPart == null && body != null) buildSinglepartContentType()
+1. urlFallback()
+2. methodFallback()
+3. parts building stays as is
+4. addCookiesToHeader()
+5. if (multiPart != null && body == null) buildMultiPartContentType()
+   else if (multiPart == null && body != null) buildSinglepartContentType()
 
 ## Coverage
 
@@ -181,12 +181,21 @@ The `handle` method of `RequestHandler` is supposed to:
 
 #### Coverage Improvement
 
-![Coverage of RequestHandler handle before new tests](/report_resources/RequestHandler_handle_after.png)
+![Coverage of RequestHandler handle before new tests](/report_resources/RequestHandler_handle_before.png)
 
-![Coverage of RequestHandler handle before new tests]("./report_resources/RequestHandler_handle_after.png")
+![Coverage of RequestHandler handle after new tests](/report_resources/RequestHandler_handle_after.png)
 
 As can be seen in the two screenshots of the coverage reports for `RequestHandler`, the branch coverage for the `handle` method
 increased from 42 % to 64 percent after two new tests were added.
+
+### HttpRequestBuilder#buildInternal
+
+![Coverage of HttpRequestBuilder buildInternal before new tests](/report_resources/HttpRequestBuilder_buildInternal_before.png)
+
+![Coverage of HttpRequestBuilder buildInternal after new tests](/report_resources/HttpRequestBuilder_buildInternal_after.png)
+
+As can be seen in the two screenshots of the coverage reports for `HttpRequestBuilder`, the branch coverage for the `buildInternal` method
+increased from 70 % to 88 % after four new tests were added. The instruction coverage also jumped from 78 % to 98 %.
 
 ## Self-assessment: Way of working
 
