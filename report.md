@@ -188,6 +188,8 @@ The `handle` method of `RequestHandler` is supposed to:
 As can be seen in the two screenshots of the coverage reports for `RequestHandler`, the branch coverage for the `handle` method
 increased from 42 % to 64 percent after two new tests were added.
 
+Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/http/RequestHandlerTest.java`
+
 ### HttpRequestBuilder#buildInternal
 
 ![Coverage of HttpRequestBuilder buildInternal before new tests](/report_resources/HttpRequestBuilder_buildInternal_before.png)
@@ -196,6 +198,8 @@ increased from 42 % to 64 percent after two new tests were added.
 
 As can be seen in the two screenshots of the coverage reports for `HttpRequestBuilder`, the branch coverage for the `buildInternal` method
 increased from 70 % to 88 % after four new tests were added. The instruction coverage also jumped from 78 % to 98 %.
+
+Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/http/HttpRequestBuilderTest.java`
 
 ## Self-assessment: Way of working
 
