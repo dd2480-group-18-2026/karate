@@ -65,13 +65,33 @@ The `handle` method of `RequestHandler` is supposed to:
       4. redirect to authentication if none of the above are possible
 - Actually handle the request (done outside of this method)
 
-For the complexity, lizard gave us 22 with 68 LOC. By our own count, we found a complexity of 18. 
+For the complexity, lizard gave us 22 with 68 LOC. By our own count, we found a complexity of 18.
+
+This method has three `return` statements which were all included in the complexity calculations. We think this contributes to the difference in complexity score.
+
+The method is not documented at all.
 
 ### 2. ScenarioEngine -> match
 
 This function is located [here](karate-core/src/main/java/com/intuit/karate/core/ScenarioEngine.java#L1769).
 
-For the complexity, lizard gave us 21 with 46 LOC. By our own count, we found a complexity of 20. 
+The `match` method of `ScenarioEngine` is supposed to evaluate if there is a match between the left-hand side (LHS) and right-hand side (RHS).
+This is done by:
+1. Resolving the LHS
+2. Early return in header case  
+3. Resolve the actual value  
+4. Applying path to retreive the value from te expression if necessary
+5. Evaluate the expected value
+6. Perform match check by applying the specific type check
+
+For the complexity, lizard gave us 21 with 46 LOC. By our own count, we found a complexity of 20.
+
+There are two `return` statements in the method and both were included in the manual count. We think this the reason
+for why our complexity score is one less than that of lizard.
+
+There is a long comment about the previous state of the method and how that relates to how it is today. Otherwise there is no documentation.
+
+This method could definately be made more readable and the complexity score could be significantly lowered through a refactor. However, as it is the brains behind the match operation in Karate, it is no surprise that it is not just a straight forward method. Luckily it is not too long so it is still quite easy to get an overview of how it works.
 
 ### 3. HttpRequestBuilder -> buildInternal
 
