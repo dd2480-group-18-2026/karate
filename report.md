@@ -199,13 +199,7 @@ increased from 70 % to 88 % after four new tests were added. The instruction cov
 
 ## Self-assessment: Way of working
 
-Current state according to the Essence standard: ...
-
-Was the self-assessment unanimous? Any doubts about certain items?
-
-How have you improved so far?
-
-Where is potential for improvement?
+For this lab we consider ourselves to be in the  In Place. We started with a meeting where we discussed how to approach the assignment and which tools to use. We also looked at the grading criteria together to make sure we had the same expectations. We did notice however that some responsibilities were unclear after that meeting. That was however quickly remedied over Discord. We are following our established way of working to a high degree, but it is still something we have to actively think about and constantly check that we follow. We have therefore not reached the Working well stage yet. To reach the next stage, we simply need to get more practice with the established methods to make them come more naturally.
 
 ## Overall experience
 
