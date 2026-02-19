@@ -1,5 +1,7 @@
 package com.intuit.karate.http;
 
+import java.util.*;
+import com.intuit.karate.core.Config;
 import com.intuit.karate.core.ScenarioEngine;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,4 +58,59 @@ class HttpRequestBuilderTest {
         assertEquals("http://host/foo%2Fbar", http.getUri());
     }     
 
+    @Test
+    void panicWithEmptyUrl() {
+        assertThrows(
+            RuntimeException.class,
+            () -> http.build()
+        );
+    }
+
+    @Test
+    void fallbackOnClientURLWhenEmptyURL() {
+        ScenarioEngine se = ScenarioEngine.forTempUse(HttpClientFactory.DEFAULT);
+        var client = HttpClientFactory.DEFAULT.create(se);
+
+        Config config = client.getConfig();
+        config.setUrl("http://test");
+        client.setConfig(config);
+
+        http = new HttpRequestBuilder(client);
+        http.build();
+
+        assertEquals("http://test", http.getUri());
+    }
+
+    @Test
+    void usesPOSTOnMultipartBody() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "field");
+        map.put("value", "value");
+
+        http.url("http://test");
+        http.multiPart(map);
+
+        HttpRequest request = http.build();
+
+        assertEquals("POST", request.getMethod());
+    }
+
+    @Test
+    void buildsBoundaryOnUserContentType() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "field");
+        map.put("value", "value");
+
+        http.url("http://test");
+        http.multiPart(map);
+        http.contentType("custom/type");
+
+        HttpRequest request = http.build();
+
+        // The actual value of the boundary field seems to be run dependent.
+        // Since it is a web parameter, I would guess it depends on the
+        // current time. We are not testing its value here, but rather
+        // the behavior of buildInternal that creates this.
+        assert(request.getContentType().contains("custom/type; boundary=")); 
+    }
 }
