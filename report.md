@@ -137,14 +137,6 @@ This function is neither commented nor documented.
 
 ## 4) Refactoring
 
-Plan for refactoring complex code:
-
-Estimated impact of refactoring (lower CC, but other drawbacks?).
-
-Carried out refactoring (optional, P+):
-
-git diff ...
-
 ### 1. RequestHandler -> handle
 
 - **Extract path adjustment**: Move the logic that adjusts `request.getPath()` into a `adjustPath(Request)` method.
@@ -207,6 +199,71 @@ The new structure of `buildInternal` would be :
    if (multiPart != null && body == null) buildMultiPartContentType()
    else if (multiPart == null && body != null) buildSinglepartContentType()
    ```
+
+### 4. MatchOperator(CoreOperator) -> execute
+
+This method is the entry point for comparing two values. It should:
+- Check if the actual value exists
+- Handles type mismatches
+- If the expected value is a special #... macro, it delegates to the macro logic
+- Otherwise it performs either an equality match or a contains-style match
+- returns pass or fail with the correct message
+
+Some complexity is necessary beacuse it supports multiple match modes, macros and a few special type cases.
+But most of the current complexity comes from doing all of it in one method, so it can be reduced by splitting the logic into small helpers.
+
+This refactoring will reduce complexity and make execute() easier to read.
+The only drawback is that the logic is split into more helper methods.
+
+- **Extract Presence Check**: 
+
+Move:
+- Checks if the actual value is missing  
+- Verifies that the expected value is not a macro  
+- Fails with `"actual path does not exist"`  
+Into:
+```java
+private boolean validateActualPresence(MatchOperation operation)
+```
+
+- **Extract Type Handling** 
+Move:
+- Wraps values for contains-family  
+- Converts XML to Map in a special case  
+- Allows macro strings to bypass mismatch  
+- Otherwise fails  
+Into: 
+```java
+private MatchOperation reconcileTypesIfNeeded(MatchOperation operation)
+```
+
+- **Extract Macro Handling**
+Move:
+- If expected is a string  
+- If it starts with `#`  
+- Then calls macro logic  
+Into
+```java
+private Boolean tryMacroMatch(MatchOperation operation)
+```
+Return values:
+- `null` → not a macro  
+- `true` / `false` → macro handled it  
+
+- **Extract Operator Logic**
+Move:
+- equals  
+- contains-family  
+Into:
+```java
+private boolean applyOperator(MatchOperation operation)
+```
+ 
+The new structure of execute() would be:
+1. Check if the actual value exists (return early if it fails)
+2. Fix type differences if needed (return early if it fails)
+3. Try macro handling (return immidiately if it was handled)
+4. Apply the operator (equals or conatins)
 
 ## 5) Coverage
 
