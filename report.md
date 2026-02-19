@@ -134,6 +134,15 @@ git diff ...
 
 Number of test cases added: two per team member (P) or at least four (P+).
 
+### RequestHandler#handle
+
+![Coverage of RequestHandler#handle before new tests](/report_resources/RequestHandler#handle_before.png)
+
+![Coverage of RequestHandler#handle before new tests](/report_resources/RequestHandler#handle_after.png)
+
+As can be seen in the two screenshots of the coverage reports for `RequestHandler`, the branch coverage for the `handle` method
+increased from 42 % to 64 percent after two new tests were added.
+
 ## Self-assessment: Way of working
 
 Current state according to the Essence standard: ...
