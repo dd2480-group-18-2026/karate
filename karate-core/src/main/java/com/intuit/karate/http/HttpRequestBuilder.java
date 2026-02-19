@@ -257,20 +257,28 @@ public class HttpRequestBuilder implements ProxyObject {
 					// Ternary
 					if (client == null) {
 						branchFlags[1][36] = true;
-					} else { branchFlags[1][37] = true; }
+					} else { 
+						branchFlags[1][37] = true; 
+						if (client.getConfig() == null) {
+							branchFlags[1][38] = true; 
+						}
+						else {
+							branchFlags[1][39] = true; 
+						}
+					}
                     // client can be null when not in karate scenario, and mock clients can have nulls
                     charset = client == null ? null : client.getConfig() == null ? null : client.getConfig().getCharset();
                     if (charset != null) {
-						branchFlags[1][38] = true;
+						branchFlags[1][40] = true;
                         // edge case, support setting content type to an empty string
                         contentType = StringUtils.trimToNull(contentType);
                         if (contentType != null) {
-							branchFlags[1][40] = true;
+							branchFlags[1][42] = true;
                             contentType = contentType + "; charset=" + charset;
                         }
-						else { branchFlags[1][41] = true; }
+						else { branchFlags[1][43] = true; }
                     }
-					else { branchFlags[1][39] = true; }
+					else { branchFlags[1][41] = true; }
                 }
 				else { branchFlags[1][35] = true; }
                 contentType(contentType);

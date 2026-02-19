@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intuit.karate.BranchCoverageInfo.branchFlags;
 import static com.intuit.karate.MatchOperation.REGEX;
 
 public interface MatchOperator {
@@ -108,50 +109,101 @@ public interface MatchOperator {
             this.equalsOperator = isEquals?this:equalsOperator(matchEachEmptyAllowed);
         }
 
-        public boolean execute(MatchOperation operation) {
+        public boolean execute(MatchOperation operation) {	
             Match.Value actual = operation.actual;
             Match.Value expected = operation.expected;
             Match.Context context = operation.context;
             if (actual.isNotPresent()) {
+				branchFlags[3][0] = true;
                 if (!expected.isString() || !expected.getAsString().startsWith("#")) {
+					branchFlags[3][2] = true;
                     return operation.fail("actual path does not exist");
                 }
+				else { branchFlags[3][3] = true; }
             }
+			else { branchFlags[3][1] = true; }
             boolean isContainsFamily = isContainsFamily();
             if (actual.type != expected.type) {
+				branchFlags[3][4] = true;
                 if (isContainsFamily &&
                         // don't tamper with strings on the RHS that represent arrays or objects
                         (!expected.isList() && !(expected.isString() && expected.isArrayObjectOrReference()))) {
+					branchFlags[3][6] = true;
                     MatchOperation mo = new MatchOperation(context, this, actual, new Match.Value(Collections.singletonList(expected.getValue())));
                     mo.execute();
+					// ternary
+					if (mo.pass) {
+						branchFlags[3][8] = true;
+					}
+					else { branchFlags[3][9] = true; }
                     return mo.pass ? operation.pass() : operation.fail(mo.failReason);
                 }
+				else { branchFlags[3][7] = true; }
                 if (expected.isXml() && actual.isMap()) {
+					branchFlags[3][10] = true;
                     // special case, auto-convert rhs
                     MatchOperation mo = new MatchOperation(context, this, actual, new Match.Value(XmlUtils.toObject(expected.getValue(), true)));
                     mo.execute();
+					if (mo.pass) {
+						branchFlags[3][12] = true;
+					}
+					else { branchFlags[3][13] = true; }
                     return mo.pass ? operation.pass() : operation.fail(mo.failReason);
                 }
+				else { branchFlags[3][11] = true; }
                 if (expected.isString()) {
+					branchFlags[3][14] = true;
                     String expStr = expected.getValue();
                     if (!expStr.startsWith("#")) { // edge case if rhs is macro
+						branchFlags[3][16] = true;
                         return operation.fail("data types don't match");
                     }
+					else { branchFlags[3][17] = true; }
                 } else {
+					branchFlags[3][15] = true;
                     return operation.fail("data types don't match");
                 }
             }
+			else { branchFlags[3][5] = true; }
             if (expected.isString()) {
+				branchFlags[3][18] = true;
                 String expStr = expected.getValue();
                 if (expStr.startsWith("#")) {
-                    return macroEqualsExpected(operation, expStr) ? operation.pass() : operation.fail(null);
+					branchFlags[3][20] = true;
+					// ternary
+					boolean macroEqualsExpected_operation_expStr = macroEqualsExpected(operation, expStr);
+					if (macroEqualsExpected_operation_expStr) {
+						branchFlags[3][22] = true;
+					}
+					else { branchFlags[3][23] = true; }
+					return macroEqualsExpected_operation_expStr ? operation.pass() : operation.fail(null);
+                    // return macroEqualsExpected(operation, expStr) ? operation.pass() : operation.fail(null);
                 }
+				else { branchFlags[3][21] = true; }
             }
+			else { branchFlags[3][19] = true; }
             if (isEquals()) {
-                return actualEqualsExpected(operation) ? operation.pass() : operation.fail("not equal");
+				branchFlags[3][24] = true;
+				// ternary
+				boolean actualEqualsExpected_operation = actualEqualsExpected(operation);
+				if (actualEqualsExpected_operation) {
+						branchFlags[3][27] = true;
+					}
+				else { branchFlags[3][28] = true; }
+				return actualEqualsExpected_operation ? operation.pass() : operation.fail("not equal");
+               	// return actualEqualsExpected(operation) ? operation.pass() : operation.fail("not equal");
             } else if (isContainsFamily) {
-                return actualContainsExpected(operation) ? operation.pass() : operation.fail("actual does not contain expected");
+				branchFlags[3][25] = true;
+				// ternary
+				boolean actualContainsExpected_operation = actualContainsExpected(operation);
+				if (actualContainsExpected_operation) {
+						branchFlags[3][29] = true;
+					}
+				else { branchFlags[3][30] = true; }
+				return actualContainsExpected_operation ? operation.pass() : operation.fail("actual does not contain expected");
+                // return actualContainsExpected(operation) ? operation.pass() : operation.fail("actual does not contain expected");
             }
+			else { branchFlags[3][26] = true; }
             throw new RuntimeException("unexpected match operator: " + this);
         }
 

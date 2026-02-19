@@ -44,6 +44,8 @@ import org.graalvm.polyglot.proxy.ProxyExecutable;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
+import static com.intuit.karate.BranchCoverageInfo.branchFlags;
+
 import java.io.File;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -1769,25 +1771,35 @@ public class ScenarioEngine {
     public Match.Result match(Match.Type matchType, String expression, String path, String rhs) {
         String name = StringUtils.trimToEmpty(expression);
         if (isDollarPrefixedJsonPath(name) || isXmlPath(name)) { // 
+			branchFlags[2][0] = true;
             path = name;
             name = RESPONSE;
         }
+		else { branchFlags[2][1] = true; }
         if (name.startsWith("$")) { // in case someone used the dollar prefix by mistake on the LHS
+			branchFlags[2][2] = true;
             name = name.substring(1);
         }
+		else { branchFlags[2][3] = true; }
         path = StringUtils.trimToNull(path);
         if (path == null) {
+			branchFlags[2][4] = true;
             if (name.startsWith("(")) { // edge case, eval entire LHS
+				branchFlags[2][6] = true;
                 path = "$";
             } else {
+				branchFlags[2][7] = true;
                 StringUtils.Pair pair = parseVariableAndPath(name);
                 name = pair.left;
                 path = pair.right;
             }
         }
+		else { branchFlags[2][5] = true; }
         if ("header".equals(name)) { // convenience shortcut for asserting against response header
+			branchFlags[2][8] = true;
             return matchHeader(matchType, path, rhs);
         }
+		else { branchFlags[2][9] = true; }
         Variable actual;
         // karate started out by "defaulting" to JsonPath on the LHS of a match so we have this kludge
         // but we now handle JS expressions of almost any shape on the LHS, if in doubt, wrap in parentheses
@@ -1800,22 +1812,30 @@ public class ScenarioEngine {
         if (isXmlPathFunction(path)
                 || (!name.startsWith("(") && !path.endsWith(")") && !path.contains(")."))
                 && (isDollarPrefixed(path) || isJsonPath(path) || isXmlPath(path))) {
+			branchFlags[2][10] = true;
             actual = evalKarateExpression(name);
             // edge case: java property getter, e.g. "driver.cookies"
             if (!actual.isMap() && !actual.isList() && !isXmlPath(path) && !isXmlPathFunction(path)) {
+				branchFlags[2][12] = true;
                 actual = evalKarateExpression(expression); // fall back to JS eval of entire LHS
                 path = "$";
-            }
+            } 
+			else { branchFlags[2][13] = true; }
         } else {
+			branchFlags[2][11] = true;
             actual = evalKarateExpression(expression); // JS eval of entire LHS
             path = "$";
         }
         if ("$".equals(path) || "/".equals(path)) {
+			branchFlags[2][14] = true;
             // we have eval-ed the entire LHS, so proceed to match RHS to "$"
         } else {
+			branchFlags[2][15] = true;
             if (isDollarPrefixed(path)) { // json-path
+				branchFlags[2][16] = true;
                 actual = evalJsonPath(actual, path);
             } else { // xpath
+				branchFlags[2][17] = true;
                 actual = evalXmlPath(actual, path);
             }
         }
