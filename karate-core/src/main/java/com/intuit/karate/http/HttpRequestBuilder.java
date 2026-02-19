@@ -162,13 +162,18 @@ public class HttpRequestBuilder implements ProxyObject {
     }
 
     private void buildInternal() {
+        // This is a fallback is the URL has not been set
         if (url == null) {
+            // The URL can also come from the client
             url = client.getConfig().getUrl();
             if (url == null) {
                 throw new RuntimeException("incomplete http request, 'url' not set");
             }
         }
+
+        // This is a fallback is no method is provided
         if (method == null) {
+            // Multipart requests need to be POST
             if (multiPart != null && multiPart.isMultipart()) {
                 method = "POST";
             } else {
@@ -176,6 +181,7 @@ public class HttpRequestBuilder implements ProxyObject {
             }
         }
         method = method.toUpperCase();
+        // This builds the payload in case of a GET request with multiple parts
         if ("GET".equals(method) && multiPart != null) {
             Map<String, Object> parts = multiPart.getFormFields();
             if (parts != null) {
@@ -183,10 +189,12 @@ public class HttpRequestBuilder implements ProxyObject {
             }
             multiPart = null;
         }
+        // This builds the content type for multipart requests
         if (multiPart != null) {
             if (body == null) { // this is not-null only for a re-try, don't rebuild multi-part
                 body = multiPart.build();
                 String userContentType = getHeader(HttpConstants.HDR_CONTENT_TYPE);
+                // Is the use has specified a content-type
                 if (userContentType != null) {
                     String boundary = multiPart.getBoundary();
                     if (boundary != null) {
@@ -197,6 +205,7 @@ public class HttpRequestBuilder implements ProxyObject {
                 }
             }
         }
+        // This handles cookies
         if (cookies != null && !cookies.isEmpty()) {
             List<String> cookieValues = new ArrayList<>(cookies.size());
             for (Cookie c : cookies) {
@@ -205,6 +214,7 @@ public class HttpRequestBuilder implements ProxyObject {
             }
             header(HttpConstants.HDR_COOKIE, StringUtils.join(cookieValues, "; "));
         }
+        // This generates content-type for not multipart requests
         if (body != null) {
             if (multiPart == null) {
                 String contentType = getContentType();
