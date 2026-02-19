@@ -136,6 +136,24 @@ Number of test cases added: two per team member (P) or at least four (P+).
 
 ### RequestHandler#handle
 
+#### Requirements
+The `handle` method of `RequestHandler` is supposed to:
+- normalize the request path
+- ensure resource type is set on the request
+- return early with static resource if that is requested
+- handle multiple session scenarios (higher up tried first):
+   1. session exists
+      1. already loaded
+      2. not loaded and then retreive from cache if possible
+   2. no session exists
+      1. use global session if allowed
+      2. create session automatically if allowed
+      3. create temporary session if authentication request
+      4. redirect to authentication if none of the above are possible
+- Actually handle the request (done outside of this method)
+
+#### Coverage Improvement
+
 ![Coverage of RequestHandler handle before new tests](/report_resources/RequestHandler_handle_after.png)
 
 ![Coverage of RequestHandler handle before new tests]("./report_resources/RequestHandler_handle_after.png")
