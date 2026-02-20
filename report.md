@@ -274,6 +274,8 @@ Document your experience in using a "new"/different coverage tool.
 How well was the tool documented? Was it possible/easy/difficult to
 integrate it with your build environment?
 
+Jacoco was decently documented, but some work with the different pom files had to be done in order to integrate it with the build environment. Once integrated you just had to run the command mvn jacoco:report after mvn verify, and open a html file that appeared in the output in order to see the coverage report. The actual output is easy to navigate and read, and the fact you can go into a file and see directly where branches are not covered was helpful to figure out how to improve coverage. 
+
 ### Your own coverage tool
 
 Show a patch (or link to a branch) that shows the instrumented code to
@@ -282,18 +284,40 @@ gather coverage measurements.
 The patch is probably too long to be copied here, so please add
 the git command that is used to obtain the patch instead:
 
-git diff ...
+git diff master..diy-coverage
 
 What kinds of constructs does your tool support, and how accurate is
 its output?
+
+The tool supports if, else, for/while and ternary operators, based on the fact that those were the ones I added. 
+
+I would consider it to be very accurate, since its output directly corresponds to whether branches were taken or not. It does not exactly match the existing tools we tested, but the similar results indicate that it does work. 
+
+In order to use the tool, all you have to do is run mvn verify on the branch where the tool has been implemented. The output will automatically appear at the bottom of the test output right above the text that says whether the build succeeded or failed.
 
 ### Evaluation
 
 1. How detailed is your coverage measurement?
 
+It is decently detailed, as it tells us exactly what branches were missed in each of the included functions, and the percentage branch coverage for each of them, as well as the total coverage. However, it can be hard to read as knowing the number of a branch isn't very helpful unless you go look at the code and check where that flag is being set / unset. It does not include instruction coverage, or a way to get a HTML document that shows exactly which lines were not covered like Jacoco.
+
 2. What are the limitations of your own tool?
 
+The main limitation is that the tool can only support new methods by manually adding all the flags then including it in the evaulation code, making it much harder to cover larger projects. The output currently also relies on being printed in a test that runs last due to alphabetical sorting, which is not a very future-proof way of doing things. While it can account for all branches the user adds flags for, it does not currently check for exceptions. If I were to modify the program being analyzed, all the flags I inserted would possibly become incorrect and therefore useless, so it also only works with static code without redoing the entire process.
+
 3. Are the results of your tool consistent with existing coverage tools?
+
+When comparing to existing coverage tools, the results are close but not identical. 
+
+RequestHandler:handle, 45 % with my tool vs 42 % with Jacoco.
+
+HttpRequestBuilder:buildInternal, 73 % with my tool vs 70 % with Jacoco.
+
+ScenarioEngine:match, 94 % with my tool vs 92 % with Jacoco. 
+
+MatchOperator:CoreOperator:execute, 94 % with my tool vs 90 % with Jacoco
+
+While I don't know the exact explanation for this, it appears my tool slightly overcounts compared to Jacoco, possibly due to handling boolean conditions in if statements differently. However, the measurements are very close, so it indicates the tool is working.
 
 ## 6) Coverage improvement
 
