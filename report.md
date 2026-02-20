@@ -69,7 +69,7 @@ For the complexity, lizard gave us 22 with 68 LOC. By our own count, we found a 
 
 This method has three `return` statements which were all included in the complexity calculations. We think this contributes to the difference in complexity score.
 
-The method is not documented at all.
+The method is not documented at all. 
 
 ### 2. ScenarioEngine -> match
 
@@ -329,12 +329,42 @@ As can be seen in the two screenshots of the coverage reports for `HttpRequestBu
 
 Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/http/HttpRequestBuilderTest.java`
 
+### 4 ScenarioEngine -> stop
+
+![Coverage of ScenarioEngine stop before new tests](/report_resources/ScenarioEngine_stop_before.png)
+
+![Coverage of ScenarioEngine stop after new tests](/report_resources/ScenarioEngine_stop_after.png)
+
+As can be seen in the screenshots the coverage reports for `ScenarioEngine`, the branch coverage of `stop` increased from 58% to 83% after the two new tests were added.
+
+Path to added test file: `issue-18 branch karate-core/src/test/java/com/intuit/karate/core/ScenarioEngineStopTest.java`
+
 ## 7) Self-assessment: Way of working
 
 For this lab we consider ourselves to be in the  In Place. We started with a meeting where we discussed how to approach the assignment and which tools to use. We also looked at the grading criteria together to make sure we had the same expectations. We did notice however that some responsibilities were unclear after that meeting. That was however quickly remedied over Discord. We are following our established way of working to a high degree, but it is still something we have to actively think about and constantly check that we follow. We have therefore not reached the Working well stage yet. To reach the next stage, we simply need to get more practice with the established methods to make them come more naturally.
 
 ## 8) Overall experience
 
-What are your main take-aways from this project? What did you learn?
+One thing that became very clear when we were looking at different projects is how hard i can be to get some of them to build successfully. Karate, the project we chose, was actually the only one that got a successful build straight away. One drawback this project has however is that it is lacking a lot in the documentation department. Add to that parameter names that do not make it immediately clear what they refer to, some of the methods were quite hard grasp at first glance. This really highlights the need for documentation and good naming conventions. However, refactoring methods actually helped in undestanding  the purpose of the them and the different cases they are supposed to handle.
 
-Is there something special you want to mention here?
+## 9) P+ Contributions
+
+**Felix:**
+- I refactored `RequestHandler#handle`. The new complexity score for the method is 1. The maxinum complexity of the new methods is 5. This is a 72.2 % decrease.
+- To see the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/RequestHandler.java`
+   
+
+**Eliott:**
+- I refactored `HttpRequestBuilder -> buildInternal`. The new complexity score is 8, and the maximum complexity of the new methods is 9. This is a 64% decrease.
+- To see the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/HttpRequestBuilder.java`
+- I also added **four** tests to the HttpRequestBuilder -> buildInternal.
+
+## Members' GitHub usernames
+
+August (GitHub: augustyvdal)
+
+Felix (GitHub: seahoers)
+ 
+Eliott (GitHub: Telmo26)
+
+Tim (GitHub: Uniquepotatoes)
