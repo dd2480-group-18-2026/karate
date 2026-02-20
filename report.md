@@ -345,9 +345,7 @@ For this lab we consider ourselves to be in the  In Place. We started with a mee
 
 ## 8) Overall experience
 
-What are your main take-aways from this project? What did you learn?
-
-Is there something special you want to mention here?
+One thing that became very clear when we were looking at different projects is how hard i can be to get some of them to build successfully. Karate, the project we chose, was actually the only one that got a successful build straight away. One drawback this project has however is that it is lacking a lot in the documentation department. Add to that parameter names that do not make it immediately clear what they refer to, some of the methods were quite hard grasp at first glance. This really highlights the need for documentation and good naming conventions. However, refactoring methods actually helped in undestanding  the purpose of the them and the different cases they are supposed to handle.
 
 ## 9) P+ Contributions
 
