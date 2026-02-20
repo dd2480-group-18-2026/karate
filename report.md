@@ -352,7 +352,19 @@ One thing that became very clear when we were looking at different projects is h
 **Felix:**
 - I refactored `RequestHandler#handle`. The new complexity score for the method is 1. The maxinum complexity of the new methods is 5. This is a 72.2 % decrease.
 - To see the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/RequestHandler.java`
+   
 
 **Eliott:**
 - I refactored `HttpRequestBuilder -> buildInternal`. The new complexity score is 8, and the maximum complexity of the new methods is 9. This is a 64% decrease.
 - To see the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/HttpRequestBuilder.java`
+- I also added **four** tests to the HttpRequestBuilder -> buildInternal.
+
+## Members' GitHub usernames
+
+August (GitHub: augustyvdal)
+
+Felix (GitHub: seahoers)
+ 
+Eliott (GitHub: Telmo26)
+
+Tim (GitHub: Uniquepotatoes)
