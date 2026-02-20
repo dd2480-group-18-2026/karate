@@ -343,6 +343,16 @@ As can be seen in the two screenshots of the coverage reports for `RequestHandle
 
 Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/http/RequestHandlerTest.java`
 
+### 2. MultiPartBuilder -> part
+
+![Coverage of MultiPartBuilder part before new tests](/report_resources/MultiPartBuilder_part_before.png)
+
+![Coverage of MultiPartBuilder part after new tests](/report_resources/MultiPartBuilder_part_after.png)
+
+As can be seen in the two screenshots of the coverage reports for `MultiPartBuilder` the branch coverage for the `part` method increased from 66 % to 83 % after two new tests were added. 
+
+Added tests `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/http/MultiPartBuilderTest.java`
+
 ### 3. HttpRequestBuilder -> buildInternal
 
 ![Coverage of HttpRequestBuilder buildInternal before new tests](/report_resources/HttpRequestBuilder_buildInternal_before.png)
