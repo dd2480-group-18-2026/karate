@@ -162,6 +162,33 @@ public class HttpRequestBuilder implements ProxyObject {
     }
 
     private void buildInternal() {
+        urlFallback();
+        methodFallback();
+
+        method = method.toUpperCase();
+
+        // This builds the payload in case of a GET request with multiple parts
+        if ("GET".equals(method) && multiPart != null) {
+            Map<String, Object> parts = multiPart.getFormFields();
+            if (parts != null) {
+                parts.forEach((k, v) -> param(k, (String) v));
+            }
+            multiPart = null;
+        }
+
+        handleCookies();
+        
+        
+        if ((multiPart != null) && (body == null)) { // body is not-null only for a re-try, don't rebuild multi-part
+            // This builds the content type for multipart requests
+            buildMultipartBody();
+        } else if ((multiPart == null) && (body != null)) {
+            // This generates content-type for not multipart requests
+            buildSinglepartBody();
+        }
+    }
+
+    private void urlFallback() {
         // This is a fallback is the URL has not been set
         if (url == null) {
             // The URL can also come from the client
@@ -170,7 +197,9 @@ public class HttpRequestBuilder implements ProxyObject {
                 throw new RuntimeException("incomplete http request, 'url' not set");
             }
         }
+    }
 
+    private void methodFallback() {
         // This is a fallback is no method is provided
         if (method == null) {
             // Multipart requests need to be POST
@@ -180,31 +209,9 @@ public class HttpRequestBuilder implements ProxyObject {
                 method = "GET";
             }
         }
-        method = method.toUpperCase();
-        // This builds the payload in case of a GET request with multiple parts
-        if ("GET".equals(method) && multiPart != null) {
-            Map<String, Object> parts = multiPart.getFormFields();
-            if (parts != null) {
-                parts.forEach((k, v) -> param(k, (String) v));
-            }
-            multiPart = null;
-        }
-        // This builds the content type for multipart requests
-        if (multiPart != null) {
-            if (body == null) { // this is not-null only for a re-try, don't rebuild multi-part
-                body = multiPart.build();
-                String userContentType = getHeader(HttpConstants.HDR_CONTENT_TYPE);
-                // Is the use has specified a content-type
-                if (userContentType != null) {
-                    String boundary = multiPart.getBoundary();
-                    if (boundary != null) {
-                        contentType(userContentType + "; boundary=" + boundary);
-                    }
-                } else {
-                    contentType(multiPart.getContentTypeHeader());
-                }
-            }
-        }
+    }
+
+    private void handleCookies() {
         // This handles cookies
         if (cookies != null && !cookies.isEmpty()) {
             List<String> cookieValues = new ArrayList<>(cookies.size());
@@ -214,31 +221,46 @@ public class HttpRequestBuilder implements ProxyObject {
             }
             header(HttpConstants.HDR_COOKIE, StringUtils.join(cookieValues, "; "));
         }
-        // This generates content-type for not multipart requests
-        if (body != null) {
-            if (multiPart == null) {
-                String contentType = getContentType();
-                if (contentType == null) {
-                    ResourceType rt = ResourceType.fromObject(body);
-                    if (rt != null) {
-                        contentType = rt.contentType;
-                    }
-                }
-                Charset charset = contentType == null ? null : HttpUtils.parseContentTypeCharset(contentType);
-                if (charset == null) {
-                    // client can be null when not in karate scenario, and mock clients can have nulls
-                    charset = client == null ? null : client.getConfig() == null ? null : client.getConfig().getCharset();
-                    if (charset != null) {
-                        // edge case, support setting content type to an empty string
-                        contentType = StringUtils.trimToNull(contentType);
-                        if (contentType != null) {
-                            contentType = contentType + "; charset=" + charset;
-                        }
-                    }
-                }
-                contentType(contentType);
+    }
+
+    private void buildMultipartBody() {
+        body = multiPart.build();
+        String userContentType = getHeader(HttpConstants.HDR_CONTENT_TYPE);
+        // Is the use has specified a content-type
+        if (userContentType != null) {
+            String boundary = multiPart.getBoundary();
+            if (boundary != null) {
+                contentType(userContentType + "; boundary=" + boundary);
+            }
+        } else {
+            contentType(multiPart.getContentTypeHeader());
+        }
+    }
+
+    private void buildSinglepartBody() {
+        String contentType = getContentType();
+
+        if (contentType == null) {
+            ResourceType rt = ResourceType.fromObject(body);
+            if (rt != null) {
+                contentType = rt.contentType;
             }
         }
+
+        Charset charset = contentType == null ? null : HttpUtils.parseContentTypeCharset(contentType);
+        if (charset == null) {
+            // client can be null when not in karate scenario, and mock clients can have nulls
+            charset = client == null ? null : client.getConfig() == null ? null : client.getConfig().getCharset();
+            if (charset != null) {
+                // edge case, support setting content type to an empty string
+                contentType = StringUtils.trimToNull(contentType);
+                if (contentType != null) {
+                    contentType = contentType + "; charset=" + charset;
+                }
+            }
+        }
+
+        contentType(contentType);
     }
 
     public Response invoke() {
