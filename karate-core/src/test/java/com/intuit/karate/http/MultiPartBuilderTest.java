@@ -108,4 +108,8 @@ class MultiPartBuilderTest {
 		);
 		assertEquals(expected, actual);
 	}
+<<<<<<< HEAD
 } 
+=======
+}
+>>>>>>> 67beddc547152263144dc555ec1f868bc8dd29aa
