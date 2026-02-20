@@ -69,7 +69,7 @@ For the complexity, lizard gave us 22 with 68 LOC. By our own count, we found a 
 
 This method has three `return` statements which were all included in the complexity calculations. We think this contributes to the difference in complexity score.
 
-The method is not documented at all.
+The method is not documented at all. 
 
 ### 2. ScenarioEngine -> match
 
@@ -338,3 +338,9 @@ For this lab we consider ourselves to be in the  In Place. We started with a mee
 What are your main take-aways from this project? What did you learn?
 
 Is there something special you want to mention here?
+
+## 9) P+ Contributions
+
+**Felix:**
+- I refactored `RequestHandler#handle`. The new complexity score for the method is 1. The maxinum complexity of the new methods is 5. This is a 72.2 % decrease.
+- To see the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/RequestHandler.java`
