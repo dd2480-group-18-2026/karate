@@ -343,4 +343,4 @@ Is there something special you want to mention here?
 
 **Felix:**
 - I refactored `RequestHandler#handle`. The new complexity score for the method is 1. The maxinum complexity of the new methods is 5. This is a 72.2 % decrease.
-- To se the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/RequestHandler.java`
+- To see the changes run: `git diff master issue-44 karate-core/src/main/java/com/intuit/karate/http/RequestHandler.java`
