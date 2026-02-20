@@ -104,6 +104,8 @@ class MultiPartBuilderTest {
 			"content-disposition: form-data; name=\"name\"",
 			"content-length: 0",
 			"content-type: application/octet-stream",
+			"",
+			"",
 			"--" + boundary + "--"
 		);
 		assertEquals(expected, actual);
