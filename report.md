@@ -327,9 +327,7 @@ Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/kara
 
 As can be seen in the two screenshots of the coverage reports for `HttpRequestBuilder`, the branch coverage for the `buildInternal` method increased from 70 % to 88 % after four new tests were added. The instruction coverage also jumped from 78 % to 98 %.
 
-Added tests:
-- New test class: karate-core/src/test/java/com/intuit/karate/core/ScenarioEngineStopTest.java
-- Added in branch: issue-18
+Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/http/HttpRequestBuilderTest.java`
 
 ### 4 ScenarioEngine -> stop
 
@@ -339,7 +337,7 @@ Added tests:
 
 As can be seen in the screenshots the coverage reports for `ScenarioEngine`, the branch coverage of `stop` increased from 58% to 83% after the two new tests were added.
 
-Added tests: `issue-18 branch karate-core\src\test\java\com\intuit\karate\core\ScenarioEngineStopTest.java`
+Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/core/ScenarioEngineStopTest.java`
 
 ## 7) Self-assessment: Way of working
 
