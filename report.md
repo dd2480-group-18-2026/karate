@@ -337,7 +337,7 @@ Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/kara
 
 As can be seen in the screenshots the coverage reports for `ScenarioEngine`, the branch coverage of `stop` increased from 58% to 83% after the two new tests were added.
 
-Added tests: `git diff master issue-18 karate-core/src/test/java/com/intuit/karate/core/ScenarioEngineStopTest.java`
+Path to added test file: `issue-18 branch karate-core/src/test/java/com/intuit/karate/core/ScenarioEngineStopTest.java`
 
 ## 7) Self-assessment: Way of working
 
